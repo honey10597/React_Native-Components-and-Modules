@@ -1,17 +1,3 @@
-
-Conversation opened. 1 read message.
-
-Skip to content
-Using Gmail with screen readers
-is:starred 
-1 of 5
-Normal Dropdown
-Inbox
-
-Honey codebrew <honey.codebrew@gmail.com>
-Wed, Nov 24, 2021, 5:13 PM
-to Honey, me, honeykumar.work004
-
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, Image, Pressable, Modal, TouchableOpacity, ScrollView, Keyboard } from 'react-native';
 import colors from '../styles/colors';
