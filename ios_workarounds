@@ -1,0 +1,192 @@
+1. pod file configuration for google maps in ios
+# Uncomment the next line to define a global platform for your project
+platform :ios, '8.0'
+
+source 'https://github.com/CocoaPods/Specs.git'
+
+target 'qwikit' do
+  use_frameworks!
+  pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga/Yoga.podspec'
+  pod 'React', path: '../node_modules/react-native', :subspecs => [
+    'Core',
+    'RCTActionSheet',
+    'RCTAnimation',
+    'RCTGeolocation',
+    'RCTImage',
+    'RCTLinkingIOS',
+    'RCTNetwork',
+    'RCTSettings',
+    'RCTText',
+    'RCTVibration',
+    'RCTWebSocket'
+  ]
+
+  pod 'GoogleMaps'  
+ 
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+      if target.name == 'yoga'
+          target.build_configurations.each do |config|
+              config.build_settings['GCC_TREAT_WARNINGS_AS_ERRORS'] = 'NO'
+              config.build_settings['GCC_WARN_64_TO_32_BIT_CONVERSION'] = 'NO'
+          end
+      end
+  end
+end
+--------------------------------------------------------------------------------------
+2. AppDeligate.m: jsCodeLocation for running on simulator
+  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+--------------------------------------------------------------------------------------
+3. AppDeligate.m: jsCodeLocation for running on device
+  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+--------------------------------------------------------------------------------------
+4. To detect os version: 
+const majorVersionIOS = parseInt(Platform.Version, 10);
+console.log('ios version is:', majorVersionIOS);
+const paddingTop = majorVersionIOS < 11 ? 20 : 0;
+--------------------------------------------------------------------------------------
+5. To get camera and library permissions, add into info.plist after 	<key>NSCameraUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like to use your camera</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like to your microphone (for videos)</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like to save photos to your photo gallery</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) would like access to your photo gallery</string>
+--------------------------------------------------------------------------------------
+6. To fix blank white screen right after splash
+https://medium.com/handlebar-labs/how-to-add-a-splash-screen-to-a-react-native-app-ios-and-android-30a3cec835ae
+--------------------------------------------------------------------------------------
+7. XCTest/XCTest.h not found
+In order to fix this for any CocoaPod dependencies you need to add the following to FRAMEWORK_SEARCH_PATHS in any Pod target that requires XCTest (e.g. Kiwi, Specta, FBSnapshotTestCase, etc).
+$(PLATFORM_DIR)/Developer/Library/Frameworks
+https://stackoverflow.com/questions/24275470/xctest-xctest-h-not-found-on-old-projects-built-in-xcode-6
+--------------------------------------------------------------------------------------
+8. To remove error 'TwitterKit/TwitterKit.h' not found
+Use #import <TwitterKit/TWTRKit.h>
+--------------------------------------------------------------------------------------
+9. To remove warning when adding native module in the project:
+
+Module module_name requires main queue setup since it overrides `init` but doesn’t implement `requiresMainQueueSetup`. In a future release React Native will default to initializing all native modules on a background thread unless explicitly opted-out of.	
+
+Add method:
+
+@objc
+static func requiresMainQueueSetup() -> Bool {
+ return true
+}
+
+in the swift bridging file.
+--------------------------------------------------------------------------------------
+10. For error: Cycle inside ; building could produce unreliable results: Xcode 10 Error
+
+In Xcode, go to File->Project/Workspace settings.
+Change the build system to Legacy Build system.
+
+https://stackoverflow.com/questions/50709330/cycle-inside-building-could-produce-unreliable-results-xcode-10-error
+--------------------------------------------------------------------------------------
+11. to remove error “'GeneratedDotEnv.m' file not found” while installing react-native-config:
+add below code at the end of the PodFile:		
+post_install do |installer|
+ installer.pods_project.targets.each do |target|
+   if target.name == 'react-native-config'
+     phase = target.project.new(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
+     phase.shell_script = "cd ../../"\
+                          " && RNC_ROOT=./node_modules/react-native-config/"\
+                          " && export SYMROOT=$RNC_ROOT/ios/ReactNativeConfig"\
+                          " && export BUILD_DIR=$RNC_ROOT/ios/ReactNativeConfig"\
+                          " && ruby $RNC_ROOT/ios/ReactNativeConfig/BuildDotenvConfig.ruby"
+
+     target.build_phases << phase
+     target.build_phases.move(phase,0)
+   end
+ end
+end
+
+https://github.com/luggit/react-native-config/issues/357
+--------------------------------------------------------------------------------------
+12. The sandbox is not in sync with the Podfile.lock-ios
+
+Try
+	pod update
+
+If above solution not worked, then:
+
+
+Add 2 User-Defined variables in Build Settings i.e. PODS_PODFILE_DIR_PATH and PODS_ROOT
+
+PODS_ROOT --> ${SRCROOT}/Pods
+
+PODS_PODFILE_DIR_PATH --> ${SRCROOT}
+
+
+
+https://stackoverflow.com/a/52617228 
+	
+OR
+
+Go to “Build Phases -> Check Pods Manifest.lock” and replace 
+diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" > /dev/null
+ TO
+diff "${SRCROOT}/Podfile.lock" "${SRCROOT}/Pods/Manifest.lock" > /dev/null
+
+https://stackoverflow.com/a/31025426
+--------------------------------------------------------------------------------------
+13. While upgrading swift version of the project, for the error:
+	“Swift class extensions and categories on Swift classes are not allowed to have +load methods” follow the below link:
+
+https://stackoverflow.com/a/56927627 
+
+https://github.com/facebook/react-native/commit/df7ea6731367df4d24cda316f8b376a26da2e06c?diff=split
+--------------------------------------------------------------------------------------
+14. To overcome the error: “require cycle node_modules/rn-fetch-blob/index.js”
+https://github.com/joltup/rn-fetch-blob/issues/183#issuecomment-450826541
+--------------------------------------------------------------------------------------
+15. To overcome following error in “react-native-share-extension”
+
+Undefined symbols for architecture x86_64:   "_JSObjectGetPrototype"
+
+-> Add “JavaScriptCore.framework” to the MyShareEx target’s general tab:
+
+https://github.com/facebook/react-native/issues/23183#issuecomment-458063622
+--------------------------------------------------------------------------------------
+16. For the error: “Firebase.h not found”
+
+In header search paths, add:
+
+${PODS_ROOT}/Headers/Public (for file FirebaseCore.h)
+${PODS_ROOT}/Firebase/CoreOnly/Sources (for Firebase.h)
+You can find the correct locations of these files using a command like this:
+find ./ -name “FirebaseCore.h”
+
+https://github.com/invertase/react-native-firebase/issues/198#issuecomment-475824038
+--------------------------------------------------------------------------------------
+17. To list all the installed fonts in the project:
+
+for (NSString* family in [UIFont familyNames])
+{
+ NSLog(@"%@", family);
+ for (NSString* name in [UIFont fontNamesForFamilyName: family])
+ {
+   NSLog(@" %@", name);
+ }
+}
+--------------------------------------------------------------------------------------
+18. 'React/RCTBridgeModule.h' file not found 
+https://github.com/crazycodeboy/react-native-splash-screen/issues/131
+--------------------------------------------------------------------------------------
+19. To fix “config.h file not found” in third-party module in Xcode:
+Change “Build System” from “New Build System” to “Lagacy Build System” from “File => Project Settings”
+If still the same error, also Try to Remove node_modules folder and try again
+--------------------------------------------------------------------------------------
+20. To Fix “React/RCTBridgeModule.h”:
+Import React from “Product => Scheme => Manage Schemes => Bottom add button”
+--------------------------------------------------------------------------------------
+21. "unable to lookup item 'Path' in SDK 'iphoneos'" while running "pod install" or initiating new project
+run "sudo xcode-select --switch /Applications/Xcode.app" in the terminal
+https://github.com/facebook/react-native/issues/18408#issuecomment-386696744 
+--------------------------------------------------------------------------------------
