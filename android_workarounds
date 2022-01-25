@@ -1,0 +1,140 @@
+1. To solve 'index.android.bundle not found' issue
+Step1: If not than (in project directory)
+mkdir android/app/src/main/assets
+Step2:
+react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
+Step3:
+react-native run-android
+--------------------------------------------------------------------------------------
+1.1 to automate the above process; add following into script part of package.json and then we can run our app using npm run android-linux
+	
+"android-linux": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res && react-native run-android"
+--------------------------------------------------------------------------------------
+2. To uninstall AndroidStudio from mac
+https://stackoverflow.com/questions/17625622/how-to-completely-uninstall-android-studio-on-mac
+--------------------------------------------------------------------------------------
+3. To overcome “metro bundler cannot listen on PORT 8081”
+	lsof -i :8081 
+	kill -9 <PID>
+--------------------------------------------------------------------------------------
+4. To remove error: EADDRINUSE :::8081 in terminal
+sudo fuser -k PORT_NO/tcp
+--------------------------------------------------------------------------------------
+5. To grant read/write permissions:
+sudo chown -R emilence:emilence folder_name/file_name
+--------------------------------------------------------------------------------------
+6. to get rid of error: “java.lang.NoClassDefFoundError: Failed resolution of: Lorg/apache/http/ProtocolVersion;”:
+
+add In manifest, in application tag.
+
+<uses-library android:name="org.apache.http.legacy" android:required="false"/>
+
+https://github.com/google/volley/issues/200
+--------------------------------------------------------------------------------------
+7. To remove ‘non-recoverable error’ in Google-Signin
+	Add SSH1 key from android studio
+--------------------------------------------------------------------------------------
+8. To resolve “Invalid key hash. The key hash does not match any stored key hashes” for FB login in release build
+
+https://github.com/facebook/react-native-fbsdk/issues/424#issuecomment-469047955 
+
+Copy the APK to your PC in Program Files\java\jdkX.X.X_XXX\bin folder. In general, for windows, its C:\Program Files\Java\jdk1.8.0_191\bin and for mac, its /Library/Java/JavaVirtualMachines/jdk1.8.0_211.jdk/Contents/Home/bin
+Open CMD/Terminal in this directory and type the following
+keytool -list -printcert -jarfile YOUR_APK_NAME.apk
+Copy the SHA1 value to your clipboard It will be something like this: 79:D0:E6:80:4E:28:1E:D1:88:28:CB:D7:E6:BE:2E:0C:FB:24:98:52
+Then go to http://tomeko.net/online_tools/hex_to_base64.php or https://base64.guru/converter/encode/hex to convert your SHA1 value to base64.
+This is what Facebook requires get the generated hash " ********************= " and copy the key hash to your Facebook developers app settings.
+--------------------------------------------------------------------------------------
+9) To overcome the error: “Network Request Failed” in android Pie, add in “AndroidMenifest”:
+<application
+       ...
+      android:usesCleartextTraffic="true"
+     ...>
+--------------------------------------------------------------------------------------
+10) To generate SHA-1 key for android on Linux:
+
+https://stackoverflow.com/a/34933381 
+
+OR 
+For Debug mode:
+	keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+
+For Release mode:
+	keytool -list -v -keystore {keystore_name} -alias {alias_name}
+
+Example:
+
+keytool -list -v -keystore C:\Users\MG\Desktop\test.jks -alias test
+--------------------------------------------------------------------------------------
+11. To resolve google signin error: “Google sign in error 12500” Or “Non-recoverable error occurred”:
+
+Make sure to:
+add SHA1 key for release and debug on firebase console(see above point for SHA1 key generation)
+add Support Email on the firebase console
+Add Application Homepage link, Application Privacy Policy link, Application Terms of Service link on https://console.developers.google.com/apis/credentials
+If app is on PlayStore(live or in beta),
+Go to https://play.google.com/apps/publish
+select your app
+From Left menu, go to release management -> App Signing and from the “App signing certificate” section, copy the SHA-1 key and update the key on the firebase console.
+
+OR
+
+	We can connect our app with the firebase using Android studio firebase assistant, which automatically adds our SHA1 key to the firebase:
+https://stackoverflow.com/a/47287677 
+
+https://stackoverflow.com/questions/47632035/google-sign-in-error-12500
+
+https://stackoverflow.com/a/57007750
+--------------------------------------------------------------------------------------
+12. To solve error: “Unable to find module for EventDispatcher React Native”
+
+https://stackoverflow.com/questions/54883304/unable-to-find-module-for-eventdispatcher-react-native/56160671#56160671
+--------------------------------------------------------------------------------------
+13. To generate debug.keystore:
+
+We can generate the debug keystore by running this command in the android/app/ directory:
+
+keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000
+
+https://github.com/facebook/react-native/issues/25629#issuecomment-511209583
+--------------------------------------------------------------------------------------
+14. To overcome following error in “react-native-share-extension”
+
+java.lang.IllegalStateException: You need to use a Theme.AppCompat theme (or descendant) with this activity
+-> Remove android:theme="@style/Theme.Share.Transparent" from the following activity in AndroidMainfest.xml file:
+
+<activity
+    android:noHistory="true"
+    android:name=".share.ShareActivity"
+    android:configChanges="orientation"
+    android:label="@string/title_activity_share"
+    android:screenOrientation="portrait"
+    android:theme="@style/Theme.Share.Transparent"   ← this
+>
+…….....
+</activity>
+-> Also remove the comments in the AndroidMainfest.xml file.
+--------------------------------------------------------------------------------------
+15. To change the color of the react-native-datetimepicker
+
+https://github.com/react-native-community/react-native-datetimepicker/issues/20#issuecomment-545527682
+--------------------------------------------------------------------------------------
+16. To fix error like: “Fatal signal 11 (SIGSEGV), code 1, fault addr 0x7f79740000 in tid 24944 (FrescoDecodeExe)” or “Any crash occuring only on Lenovo or samsung devices”,
+
+	Make sure that you are not passing ‘null/undefined’ ‘uri/source’ to the <Image /> component
+--------------------------------------------------------------------------------------
+16. To enable Android app for Firebase DebugView
+Make sure you set meta-data at the manifest firebase_analytics_collection_enabled to be true
+ 
+<meta-data android:name="firebase_analytics_collection_enabled" android:value="true" tools:replace="android:value"
+ />
+and hit the following command to enable the debug view for the application id:
+https://stackoverflow.com/a/45839040/9282328 
+https://stackoverflow.com/a/55602027/9282328 
+--------------------------------------------------------------------------------------
+
+17. To enable iOS app for Firebase DebugView
+Add -FIRDebugEnabled to Edit Scheme > Run > Arguments > Arguments Passed On Launch
+
+--------------------------------------------------------------------------------------
+
