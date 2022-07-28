@@ -4,6 +4,9 @@ import { moderateScale, textScale, width } from '../styles/responsiveSize';
 import colors from '../styles/colors';
 import imagePath from '../constants/imagePath';
 import { ApplyEaseOutAnimation, InitAnimation } from '../utils/helperFunctions';
+import commonStyles from '../styles/commonStyles';
+
+
 
 InitAnimation()
 
@@ -12,12 +15,12 @@ const CustomTabbar = ({ state, descriptors, navigation }) => {
         return (
             <TouchableOpacity
                 style={{
-                    backgroundColor: "red",
+                    backgroundColor: "#D60A19",
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "center",
-                    height: moderateScale(70),
-                    width: width / 5,
+                    height: moderateScale(80),
+                    width: width / 5
                 }}
                 activeOpacity={0.9}
             >
@@ -25,35 +28,35 @@ const CustomTabbar = ({ state, descriptors, navigation }) => {
                     <View
                         style={{
                             width: width / 5,
-                            height: moderateScale(35),
+                            height: moderateScale(40),
                             backgroundColor: "white",
                         }}
                     />
                     <View
                         style={{
                             // width: width / 5,
-                            height: moderateScale(35),
-                            backgroundColor: "red",
+                            height: moderateScale(40),
+                            backgroundColor: "#D60A19",
                         }}
                     />
 
                     <View style={{
-                        backgroundColor: "red",
+                        backgroundColor: "#D60A19",
                         justifyContent: "center",
                         alignItems: "center",
                         alignSelf: "center",
                         height: width / 5,
                         width: width / 5,
                         borderWidth: moderateScale(8),
-                        borderRadius: (width / 5) / 2.1,
+                        borderRadius: (width / 5) / 2,
                         borderColor: colors.white,
                         position: "absolute",
                         overflow: "hidden",
-                        bottom: moderateScale(8),
+                        bottom: moderateScale(10),
                         shadowColor: "#000",
                         shadowOffset: { width: 0, height: 1 },
-                        shadowOpacity: 0.4,
-                        shadowRadius: 6,
+                        shadowOpacity: 0.6,
+                        shadowRadius: 8,
                         elevation: 2,
                     }}>
                         <Image
@@ -73,7 +76,7 @@ const CustomTabbar = ({ state, descriptors, navigation }) => {
         <View style={{
             flexDirection: "row",
             justifyContent: "space-between",
-            backgroundColor: "white"
+            backgroundColor: "white",
         }}>
             {state.routes.map((route, index) => {
                 const { options } = descriptors[route.key];
@@ -116,9 +119,6 @@ const CustomTabbar = ({ state, descriptors, navigation }) => {
                                         : '';
 
                 const onPress = () => {
-
-                    ApplyEaseOutAnimation()
-
                     const event = navigation.emit({
                         type: 'tabPress',
                         target: route.key,
@@ -141,14 +141,14 @@ const CustomTabbar = ({ state, descriptors, navigation }) => {
                         <TouchableOpacity
                             onPress={onPress}
                             style={{
-                                backgroundColor: "red",
+                                backgroundColor: "#D60A19",
                                 justifyContent: "center",
                                 alignItems: "center",
                                 alignSelf: "flex-end",
-                                height: moderateScale(60),
+                                height: moderateScale(76),
                                 width: width / 5,
-                                borderTopRightRadius: activeIndex - index == 1 ? moderateScale(24) : 0,
-                                borderTopLeftRadius: index == activeIndex + 1 ? moderateScale(24) : 0,
+                                borderTopRightRadius: activeIndex - index == 1 ? moderateScale(26) : 0,
+                                borderTopLeftRadius: index == activeIndex + 1 ? moderateScale(26) : 0,
                             }}
                             activeOpacity={0.9}
                         >
@@ -158,8 +158,10 @@ const CustomTabbar = ({ state, descriptors, navigation }) => {
 
                             <Text
                                 style={{
+                                    ...commonStyles.fontSize11,
                                     color: colors.white,
-                                    fontSize: textScale(10)
+                                    marginVertical: moderateScale(2),
+                                    fontSize: textScale(12)
                                 }}>
                                 {label}
                             </Text>
