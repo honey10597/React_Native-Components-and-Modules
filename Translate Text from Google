@@ -1,0 +1,5 @@
+1. Copy key:value pair in google sheet.
+2. To remove unwanted things like - ( " , )
+   2.1) Select line, Click on Data -> Text To column -> Delimited -> Next -> (Tab + Other) -> Add Other : or , in other -> Finish
+   2.2) To Translate ( click on new row -> in first line ->  =GOOGLETRANSLATE(click on row, previoud language,new language)
+3.  =CONCAT(Column 1, Column 2)   
