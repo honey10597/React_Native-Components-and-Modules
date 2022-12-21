@@ -1,0 +1,51 @@
+If you are getting issue while uploading image to server on android then try following methods :- 
+ 
+ 1. Add ** 'Content-Type': 'multipart/form-data' ** to header in axios 
+ 2. Make image form data in following way.
+ 
+   const formData = new FormData();
+
+    let fileName = picImage.path.split('/');
+    fileName = fileName[fileName.length - 1];
+    fileName = new Date().getTime() + fileName;
+
+    formData.append("profile_image", {
+      uri: picImage?.path,
+      name: "image.png",
+      fileName: "filename",
+      type: "image/png",
+    })
+    
+  3. Try to uplaod image in this api. :->
+  
+  const formImage = new FormData();
+    
+    formImage.append("media", {
+      uri: picImage.path,
+      name: "image.png",
+      fileName: "filename",
+      type: "image/png",
+    });
+
+    fetch("https://admin.likehome.ae/api/upload-media", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      body: formImage
+    }).then(response => response.json())
+      .then(json => {
+        console.log(json, "addAffiliateApi json");
+      })
+      .catch(error => {
+        console.log(error, "addAffiliateApi error");
+      });
+      
+4. Try disable flipper
+5. Add uses:clearTextTraffic="true" in androidManifest.xml
+
+
+In current project , I am using following versions:-
+
+"axios": "^0.27.0",
+"react-native-image-crop-picker": "^0.37.3",
