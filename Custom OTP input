@@ -186,8 +186,9 @@ const OtpInputComp = ({
 const styles = StyleSheet.create({
     textInputStyle: {
         backgroundColor: "#F6F8FB",
-        height: moderateScale(56),
-        width: moderateScale(56),
+       // height: moderateScale(56),
+       // width: moderateScale(56),
+    paddingVertical: moderateScale(12),
         fontSize: textScale(14),
         // fontFamily: font.regular,
         color: colors.blackColor,
