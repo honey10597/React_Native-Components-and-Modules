@@ -29,3 +29,13 @@ import SocketIOClient from 'socket.io-client';
             console.log('response from server')
         })
     }
+
+export var socketRef
+
+export const ConnectingSocket = userData => {
+  const socketLink = `${SOCKET_URL}?user_id=${userData?.id}`
+  socketRef = io(socketLink, { transports: ['websocket'] })
+  socketRef.on('connect', () => {
+    console.log('===== socket connected ===== ConnectingSocket')
+  })
+}
