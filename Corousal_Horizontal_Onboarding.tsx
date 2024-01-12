@@ -1,3 +1,11 @@
+  const _onScroll = (e: any) => {
+    let contentOffset = e?.nativeEvent?.contentOffset;
+    let viewSize = e?.nativeEvent?.layoutMeasurement;
+    let pageNum = Math.floor(contentOffset?.x / viewSize?.width);
+    setState((prevState) => ({ ...prevState, activeIndex: pageNum }))
+  }
+
+
  <ScrollView
         horizontal
         style={{
