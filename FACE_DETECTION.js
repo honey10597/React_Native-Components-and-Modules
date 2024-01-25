@@ -1,3 +1,60 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// 1. First call this after image select from gallery and load into imageObject state. 
+  useEffect(() => {
+    const processImage = async () => {
+      if (imageObject && imageObject.path) {
+        setLoading(true)
+        const options = {
+          landmarkMode: FaceDetectorLandmarkMode.ALL,
+          contourMode: FaceDetectorContourMode.ALL
+        }
+
+        const faces = await FaceDetection.processImage(
+          imageObject.path,
+          options
+        )
+
+        console.log(faces, 'hello faces ====>>>>>>>>>>')
+
+        if (faces.length === 0) {
+          alert("We didn't detected any face")
+          setProfileApproved(false)
+        } else if (faces.length > 1) {
+          alert('We detected more than one face')
+          setProfileApproved(false)
+        } else {
+          callFaceFeature(faces)
+        }
+
+        const imageSizeResult = calculateImageSize(
+          imageObject.width,
+          imageObject.height
+        )
+
+        const faceRectResults = []
+
+        faces.forEach(face => {
+          const faceRect = calculateFaceRectInsideImage(
+            face.boundingBox,
+            imageSizeResult
+          )
+
+          faceRectResults.push(faceRect)
+        })
+
+        console.log(faceRectResults, 'face rect results ===>>>>>>>>>>>')
+        setLoading(false)
+      }
+    }
+
+    processImage()
+  }, [imageObject])
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 import React, { useEffect, useRef, useState } from 'react'
 import {
   StyleSheet,
