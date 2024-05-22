@@ -10,6 +10,6 @@ useEffect(() => {
             clearInterval(timerRef.current);
         }
         return () => {
-            clearTimeout(timerRef.current)
+            clearInterval(timerRef.current)
         }
     }, [timer])
