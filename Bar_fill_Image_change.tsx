@@ -56,7 +56,7 @@ const ZZZ = ({ }) => {
 
                 setTimeout(() => {
                     imageOpacity.value = withTiming(1, { duration: 500 }); // Fade-in
-                    imageScale.value = withTiming(1, { duration: 500 }); // Scale back
+                    // imageScale.value = withTiming(1, { duration: 100 }); // Scale back
                 }, 100);
             }, DURATION + 50);
         }
